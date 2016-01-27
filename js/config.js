@@ -68,7 +68,7 @@ var config = {
     },
 	traffic: {
 		active: true,
-		regular: true,			//Regular is true if you work a consistent schedule and want traffic displayed before work, false if you want your commute displayed all the time
+		regular: false,			//Regular is true if you work a consistent schedule and want traffic displayed before work, false if you want your commute displayed all the time
 		weekStart: 1,
 		weekEnd: 5,				//Day of the week, Sunday = 0, etc
 		startTimeHour: 7, 		//Hour of the day you at which you start work, in 24H format
