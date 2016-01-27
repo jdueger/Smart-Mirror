@@ -33,6 +33,8 @@ jQuery(document).ready(function($) {
 
     moment.locale(config.lang);
 
+	weather.init();
+
 	version.init();
 
 	time.init();
@@ -43,8 +45,6 @@ jQuery(document).ready(function($) {
 
 	traffic.init();	
 	
-	weather.init();
-
 	news.init();
 	
 });
