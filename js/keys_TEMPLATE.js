@@ -25,10 +25,21 @@ var keys = {
 		}
 	},
 	calendar: {
-        maximumEntries: 10,
-        url: "CALENDAR.ics ADDRESS"
-        // For Google Calendar, it's the 'Private Address' under Calendar Settings when viewing your Calendar
-    },
+		maximumEntries: 10, // Total Maximum Entries
+		displaySymbol: true,
+		defaultSymbol: 'calendar', // Fontawsome Symbol see http://fontawesome.io/cheatsheet/
+		urls: [
+			{
+				symbol: 'calendar-o',
+				url: 'CALENDAR.ics ADDRESS'
+				// For Google Calendar, it's the 'Private Address' under Calendar Settings when viewing your Calendar
+			},
+			{
+				symbol: 'calendar-check-o',
+				url: 'CALENDAR.ics ADDRESS'
+			}
+		]
+	},
 	birthdays: [
 		{
 			day:DAY_OF_FIRST_BIRTHDAY,
