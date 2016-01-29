@@ -7,7 +7,8 @@ var config = {
         interval: 60000,
         fadeInterval: 4000,
         morning: [
-            'Good morning!',
+			'<i class="fa-5x fa-hand-peace-o"></i>',
+			'Good morning!',
             'Enjoy your day!',
             'You look great today!',
 			'I like your style!',
@@ -33,7 +34,7 @@ var config = {
 			
         ],
         evening: [
-            'You have great taste in mirrors!',
+			'You have great taste in mirrors!',
             'Your face makes other people look ugly!',
 			'Your hair looks stunning!',
 			'You could survive a Zombie apocalypse. Maybe.',
@@ -56,7 +57,7 @@ var config = {
             'Nollaig Shona Duit!',
 			'Happy Christmas!'
         ]
-		
+
     },
     news: {
         feed: [
