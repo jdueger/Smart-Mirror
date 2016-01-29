@@ -55,11 +55,11 @@ traffic.updateCurrentTraffic = function () {
 					var minutes = "0" + leaveByTime.getMinutes();
 					var formattedTime = hours + ':' + minutes.substr(-2);
 
-					$(this.trafficLocation).updateWithText('<p class="padding">' + _trafficPhrase + ', leave by ' + formattedTime, this.fadeInterval);
+					$(this.trafficLocation).updateWithText('<i class="fa padding fa-car"></i>' + _trafficPhrase + ', leave by ' + formattedTime, this.fadeInterval);
 					
 				} else {
 					
-					$(this.trafficLocation).updateWithText('<p class="padding">' + _trafficPhrase + ', leave now', this.fadeInterval);
+					$(this.trafficLocation).updateWithText('<i class="fa padding fa-car"></i>' + _trafficPhrase + ', leave now', this.fadeInterval);
 				
 				}
 				
@@ -83,7 +83,7 @@ traffic.updateCurrentTraffic = function () {
 					_trafficTime = _durationInTraffic - _duration,
 					_trafficPhrase = traffic.getPhrase(_trafficTime);
 
-				$(this.trafficLocation).updateWithText('<p class="padding">' + _trafficPhrase + ', current commute is ' + _durationInTrafficMinutes, this.fadeInterval);
+				$(this.trafficLocation).updateWithText('<i class="fa padding fa-car"></i>' + _trafficPhrase + ', current commute is ' + _durationInTrafficMinutes, this.fadeInterval);
 
 			}.bind(this),
 			error: function () {
