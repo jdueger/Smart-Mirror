@@ -116,6 +116,11 @@ canvas {
 	line-height: 35px;
 }
 
+.xxlarge
+{
+	font-size: 200px;
+}
+
 .xdimmed
 {
 	color: #666;
@@ -206,6 +211,14 @@ canvas {
 	font-family: "walkway_boldregular";
 	/*padding-top: 5px;*/
 }
+
+.calendar-table .calendar-icon {
+	width: 1em;
+	min-width: 1em;
+	margin-right: 5px;
+	text-align: center;
+}
+
 .calendar-table .description {
 	padding-right: 10px;
 	text-align: left;
