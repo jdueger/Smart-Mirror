@@ -47,6 +47,7 @@ var config = {
             'Dogs, better than people, since forever'
         ],
         birthday: [
+			'<i class="fa-5x fa-birthday-cake"></i><br>Happy Birthday ',
             'Happy Birthday ',
             'Have a great birthday today ',
             'Yay, your birthday is today, '

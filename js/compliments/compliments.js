@@ -26,10 +26,6 @@ compliments.updateCompliment = function () {
 	var dateMonth = moment().month() + 1;	//moment().month() returns 0-11, we need to change that to 1-12
 	var birthdayToday = false;
 	var count = this.birthdayList.length;
-	
-	// In the following if statement we use .slice() on the
-	// compliments array to make a copy by value. 
-	// This way the original array of compliments stays in tact.
 
 	for (var i = 0; i < count; i++) {
 		if(dateDay == this.birthdayList[i].day && dateMonth == this.birthdayList[i].month){
