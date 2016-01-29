@@ -17,6 +17,8 @@
   font-size: 0.8em;
   text-rendering: auto;
   padding-right: 10px;
+  position: relative;
+  top: -1px;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
