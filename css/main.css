@@ -181,44 +181,40 @@ canvas {
 	width: 50px;
 	text-align: right;
 }
-
 .forecast-table .temp-max {
 	width: 60px;
 }
-
 .forecast-table .day {
 	color: #999;
 }
-
 .feelsliketemp {
 	font-size: 20px;
 	letter-spacing: 0px;
 	/*font-family: "walkway_ultraboldregular";*/
 }
-
 .feelsliketemp .padding {
 	padding-bottom: 15px;
 }
 
 .traffic .padding {
 	padding-bottom: 15px;
+	padding-left: 1px;
 }
 
 .calendar-table {
+	border: 0;
 	font-size: 20px;
 	line-height: 20px;
 	/*margin-top: 10px;*/
 	font-family: "walkway_boldregular";
 	/*padding-top: 5px;*/
 }
-
 .calendar-table .calendar-icon {
 	width: 1em;
 	min-width: 1em;
 	margin-right: 5px;
 	text-align: center;
 }
-
 .calendar-table .description {
 	padding-right: 10px;
 	text-align: left;
@@ -227,10 +223,7 @@ canvas {
 	padding-left: 20px;
 	text-align: right;
 }
-.calendar-table .leaveby {
-	padding-left: 12px;
-	text-align: left;
-}
+
 
 @font-face {
 	font-family: 'walkway_ultraboldregular';

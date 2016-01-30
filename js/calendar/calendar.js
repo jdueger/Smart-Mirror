@@ -2,7 +2,7 @@ var calendar = {
 	eventList: [],
 	calendarLocation: '.calendar',
 	updateDataInterval: 60000,
-	fadeInterval: 1000,
+	fadeInterval: 0,
 	intervalId: null,
 	dataIntervalId: null,
 	maximumEntries: keys.calendar.maximumEntries || 10,
@@ -18,9 +18,8 @@ var calendar = {
 		key: keys.traffic.params.key
 	},
 	traffic: config.calendar.traffic,
-	travelBuffer: 300,
-	travelPhrase: ''
-}
+	travelBuffer: 300
+};
 
 calendar.processEvents = function (url, events) {
 	tmpEventList = [];
@@ -75,7 +74,6 @@ calendar.processEvents = function (url, events) {
 				if (e.LOCATION !== undefined){
 					var unix_time = moment(startDate).unix();
 					var eventLocation = e.LOCATION;
-					var travelPhrase = '';
 				}
 			}else if (seconds >= 60*60*24*2){
 				var time_string = moment(startDate).fromNow();
@@ -83,7 +81,7 @@ calendar.processEvents = function (url, events) {
 				var time_string = moment(startDate).calendar();
 			}
 			if (!e.RRULE) {
-				this.eventList.push({'description':e.SUMMARY,'location':eventLocation,'seconds':seconds,'days':time_string,'url': url, symbol: this.calendarSymbol});
+				this.eventList.push({'description':e.SUMMARY,'location':eventLocation,'unixTime':unix_time,'seconds':seconds,'days':time_string,'url': url, symbol: this.calendarSymbol});
 			}
 			e.seconds = seconds;
 		}
@@ -119,62 +117,9 @@ calendar.processEvents = function (url, events) {
 	// Limit the number of entries.
 	this.eventList = this.eventList.slice(0, calendar.maximumEntries);
 
-	/*
-	if (typeof this.eventList[0].location !== 'undefined' && calendar.traffic) {
-		var geocoder = new google.maps.Geocoder();
 
-		geocoder.geocode( { 'address': this.eventList[0].location}, function(results, status) {
 
-			if (status === google.maps.GeocoderStatus.OK) {
-				var latitude = results[0].geometry.location.lat();
-				var longitude = results[0].geometry.location.lng();
-				calendar.params.destination = latitude + ',' + longitude;
-
-				$.ajax({
-					type: 'GET',
-					url: 'controllers/traffic.php?',
-					dataType: 'json',
-					data: calendar.params,
-					success: function (data) {
-
-						var travelTime = data.routes[0].legs[0].duration_in_traffic.value;
-
-						if(travelTime > 0){
-							var leaveByTimeSeconds = calendar.eventList[0].unixTime - (travelTime + calendar.travelBuffer);
-							var unix_time = moment().unix();
-							if (leaveByTimeSeconds > (unix_time + calendar.travelBuffer)){
-								var leaveByTime = new Date(leaveByTimeSeconds*1000);
-								var hours = leaveByTime.getHours();
-
-								if(hours>12){
-									hours-=12;
-								}
-
-								var minutes = "0" + leaveByTime.getMinutes();
-								var formattedTime = hours + ':' + minutes.substr(-2);
-								
-								calendar.travelPhrase= 'Leave by ' + formattedTime;
-							} else {
-								calendar.travelPhrase= 'Leave now';
-							}
-							
-						} else{
-							calendar.travelPhrase = '';
-						}
-
-					}.bind(this),
-					error: function () {
-						calendar.travelPhrase = '';
-					}
-				});
-			} else {
-				calendar.travelPhrase = '';
-			}
-		});
-	} 
-	*/
-
-}
+};
 
 calendar.updateData = function (callback) {
 	new ical_parser("controllers/calendar.php" + "?url="+encodeURIComponent(this.calendarUrl), function(cal) {
@@ -200,48 +145,121 @@ calendar.updateData = function (callback) {
 
 	}.bind(this));
 
-}
+};
 
 calendar.updateCalendar = function (eventList) {
-	var _is_new = true;
-	if ($('.calendar-table').length) {
-		_is_new = false;
+
+	var table = $('<table/>').addClass('xsmall').addClass('calendar-table');
+	var opacity = 1;
+
+	if(eventList.length > 0){
+
+		if (typeof eventList[0].location !== 'undefined' && calendar.traffic) {
+			var geocoder = new google.maps.Geocoder();
+
+			geocoder.geocode( { 'address': eventList[0].location}, function(results, status) {
+
+				if (status === google.maps.GeocoderStatus.OK) {
+					var latitude = results[0].geometry.location.lat();
+					var longitude = results[0].geometry.location.lng();
+					calendar.params.destination = latitude + ',' + longitude;
+
+					$.ajax({
+						type: 'GET',
+						url: 'controllers/traffic.php?',
+						dataType: 'json',
+						data: calendar.params,
+						success: function (data) {
+
+							var row = $('<tr/>').css('opacity', opacity);
+							if (calendar.displaySymbol) {
+								row.append($('<td/>').addClass('fa').addClass('fa-'+eventList[0].symbol).addClass('calendar-icon'));
+							}
+							row.append($('<td/>').html(eventList[0].description).addClass('description'));
+							row.append($('<td/>').html(eventList[0].days).addClass('days dimmed'));
+							table.append(row);
+							opacity -= 1 / (eventList.length + 5);
+
+							var travelTime = data.routes[0].legs[0].duration_in_traffic.value;
+
+							if(travelTime > 0){
+								var leaveByTimeSeconds = eventList[0].unixTime - (travelTime + calendar.travelBuffer);
+								var unix_time = moment().unix();
+								if (leaveByTimeSeconds > (unix_time + calendar.travelBuffer)){
+									var leaveByTime = new Date(leaveByTimeSeconds*1000);
+									var hours = leaveByTime.getHours();
+
+									if(hours>12){
+										hours-=12;
+									}
+
+									var minutes = "0" + leaveByTime.getMinutes();
+									var formattedTime = hours + ':' + minutes.substr(-2);
+
+									row = $('<tr/>').css('opacity',opacity);
+									row.append($('<td/>').html(''));
+									row.append($('<td/>').html('Leave by ' + formattedTime).addClass('description'));
+								} else {
+									row = $('<tr/>').css('opacity',opacity);
+									row.append($('<td/>').html(''));
+									row.append($('<td/>').html('Leave now').addClass('description'));
+								}
+
+								table.append(row);
+								opacity -= 1 / (eventList.length + 5);
+							}
+
+							for (var i in eventList) {
+								if(i>0) {
+									var e = eventList[i];
+									row = $('<tr/>').css('opacity', opacity);
+									if (calendar.displaySymbol) {
+										row.append($('<td/>').addClass('fa').addClass('fa-'+e.symbol).addClass('calendar-icon'));
+									}
+									row.append($('<td/>').html(e.description).addClass('description'));
+									row.append($('<td/>').html(e.days).addClass('days dimmed'));
+									table.append(row);
+									opacity -= 1 / (eventList.length + 5);
+								}
+							}
+							$(calendar.calendarLocation).updateWithText(table, this.fadeInterval);
+
+						}.bind(this),
+						error: function () {
+							calendar.fillTable(eventList,table);
+						}
+					});
+				} else {
+					calendar.fillTable(eventList,table);
+				}
+			});
+		} else {
+			calendar.fillTable(eventList,table);
+		}
+
+	}else{
+		$(this.calendarLocation).updateWithText('', this.fadeInterval);
 	}
-	table = $('<table/>').addClass('xsmall').addClass('calendar-table');
-	opacity = 1;
+
+};
+
+calendar.fillTable = function(eventList,table){
+	var opacity = 1;
 
 	for (var i in eventList) {
 		var e = eventList[i];
-		var row = $('<tr/>').attr('id', 'event'+i).css('opacity',opacity).addClass('description');
-		if (this.displaySymbol) {
+
+		var row = $('<tr/>').css('opacity', opacity);
+		if (calendar.displaySymbol) {
 			row.append($('<td/>').addClass('fa').addClass('fa-'+e.symbol).addClass('calendar-icon'));
 		}
 		row.append($('<td/>').html(e.description).addClass('description'));
 		row.append($('<td/>').html(e.days).addClass('days dimmed'));
-		if (! _is_new && $('#event'+i).length) {
-			$('#event'+i).updateWithText(row.children(), this.fadeInterval);
-		} else {
-			// Something wrong - replace whole table
-			_is_new = true;
-		}
 		table.append(row);
-
-		/*
-		if(i==0 && typeof eventList[0].location !== 'undefined'){
-			row = $('<tr/>').css('opacity',opacity).addClass('description');
-			row.append($('<td/>').html('').addClass('description'));
-			row.append($('<td/>').html(calendar.travelPhrase).addClass('description'));
-			table.append(row);
-		}
-		*/
-
-		opacity -= 1 / (eventList.length + 3);
+		opacity -= 1 / (eventList.length + 5);
 	}
-	if (_is_new) {
-		$(this.calendarLocation).updateWithText(table, this.fadeInterval);
-	}
-
-}
+	$(calendar.calendarLocation).updateWithText(table, this.fadeInterval);
+};
 
 calendar.init = function () {
 
@@ -251,4 +269,4 @@ calendar.init = function () {
 		this.updateData(this.updateCalendar.bind(this));
 	}.bind(this), this.updateDataInterval);
 
-}
+};
