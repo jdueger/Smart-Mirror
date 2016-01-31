@@ -180,7 +180,10 @@ calendar.updateCalendar = function (eventList) {
 							table.append(row);
 							opacity -= 1 / (eventList.length + 5);
 
-							var travelTime = data.routes[0].legs[0].duration_in_traffic.value;
+							var travelTime = data.routes[0].legs[0].duration_in_traffic.value,
+								duration = data.routes[0].legs[0].duration.value,
+								trafficTime = travelTime - duration,
+								trafficPhrase = traffic.getPhrase(trafficTime);
 
 							if(travelTime > 0){
 								var leaveByTimeSeconds = eventList[0].unixTime - (travelTime + calendar.travelBuffer);
@@ -198,11 +201,11 @@ calendar.updateCalendar = function (eventList) {
 
 									row = $('<tr/>').css('opacity',opacity);
 									row.append($('<td/>').html(''));
-									row.append($('<td/>').html('Leave by ' + formattedTime).addClass('description'));
+									row.append($('<td/>').html(trafficPhrase + ', leave by ' + formattedTime).addClass('description'));
 								} else {
 									row = $('<tr/>').css('opacity',opacity);
 									row.append($('<td/>').html(''));
-									row.append($('<td/>').html('Leave now').addClass('description'));
+									row.append($('<td/>').html(trafficPhrase + ', leave now').addClass('description'));
 								}
 
 								table.append(row);
