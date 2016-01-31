@@ -150,7 +150,7 @@ calendar.updateData = function (callback) {
 calendar.updateCalendar = function (eventList) {
 
 	var table = $('<table/>').addClass('xsmall').addClass('calendar-table');
-	var opacity = 1;
+
 
 	if(eventList.length > 0){
 
@@ -170,63 +170,7 @@ calendar.updateCalendar = function (eventList) {
 						dataType: 'json',
 						data: calendar.params,
 						success: function (data) {
-
-							var row = $('<tr/>').css('opacity', opacity);
-							if (calendar.displaySymbol) {
-								row.append($('<td/>').addClass('fa').addClass('fa-'+eventList[0].symbol).addClass('calendar-icon'));
-							}
-							row.append($('<td/>').html(eventList[0].description).addClass('description'));
-							row.append($('<td/>').html(eventList[0].days).addClass('days dimmed'));
-							table.append(row);
-							opacity -= 1 / (eventList.length + 5);
-
-							var travelTime = data.routes[0].legs[0].duration_in_traffic.value,
-								duration = data.routes[0].legs[0].duration.value,
-								trafficTime = travelTime - duration,
-								trafficPhrase = traffic.getPhrase(trafficTime);
-
-							if(travelTime > 0){
-								var leaveByTimeSeconds = eventList[0].unixTime - (travelTime + calendar.travelBuffer);
-								var unix_time = moment().unix();
-								if (leaveByTimeSeconds > (unix_time + calendar.travelBuffer)){
-									var leaveByTime = new Date(leaveByTimeSeconds*1000);
-									var hours = leaveByTime.getHours();
-
-									if(hours>12){
-										hours-=12;
-									}
-
-									var minutes = "0" + leaveByTime.getMinutes();
-									var formattedTime = hours + ':' + minutes.substr(-2);
-
-									row = $('<tr/>').css('opacity',opacity);
-									row.append($('<td/>').html(''));
-									row.append($('<td/>').html(trafficPhrase + ', leave by ' + formattedTime).addClass('description'));
-								} else {
-									row = $('<tr/>').css('opacity',opacity);
-									row.append($('<td/>').html(''));
-									row.append($('<td/>').html(trafficPhrase + ', leave now').addClass('description'));
-								}
-
-								table.append(row);
-								opacity -= 1 / (eventList.length + 5);
-							}
-
-							for (var i in eventList) {
-								if(i>0) {
-									var e = eventList[i];
-									row = $('<tr/>').css('opacity', opacity);
-									if (calendar.displaySymbol) {
-										row.append($('<td/>').addClass('fa').addClass('fa-'+e.symbol).addClass('calendar-icon'));
-									}
-									row.append($('<td/>').html(e.description).addClass('description'));
-									row.append($('<td/>').html(e.days).addClass('days dimmed'));
-									table.append(row);
-									opacity -= 1 / (eventList.length + 5);
-								}
-							}
-							$(calendar.calendarLocation).updateWithText(table, this.fadeInterval);
-
+							calendar.traffic(data,eventList,table);
 						}.bind(this),
 						error: function () {
 							calendar.fillTable(eventList,table);
@@ -244,6 +188,66 @@ calendar.updateCalendar = function (eventList) {
 		$(this.calendarLocation).updateWithText('', this.fadeInterval);
 	}
 
+};
+
+calendar.traffic = function(data,eventList,table){
+	var opacity = 1;
+
+	var row = $('<tr/>').css('opacity', opacity);
+	if (calendar.displaySymbol) {
+		row.append($('<td/>').addClass('fa').addClass('fa-'+eventList[0].symbol).addClass('calendar-icon'));
+	}
+	row.append($('<td/>').html(eventList[0].description).addClass('description'));
+	row.append($('<td/>').html(eventList[0].days).addClass('days dimmed'));
+	table.append(row);
+	opacity -= 1 / (eventList.length + 5);
+
+	var travelTime = data.routes[0].legs[0].duration_in_traffic.value,
+			duration = data.routes[0].legs[0].duration.value,
+			trafficTime = travelTime - duration,
+			trafficPhrase = traffic.getPhrase(trafficTime);
+
+	if(travelTime > 0){
+		var leaveByTimeSeconds = eventList[0].unixTime - (travelTime + calendar.travelBuffer);
+		var unix_time = moment().unix();
+		if (leaveByTimeSeconds > (unix_time + calendar.travelBuffer)){
+			var leaveByTime = new Date(leaveByTimeSeconds*1000);
+			var hours = leaveByTime.getHours();
+
+			if(hours>12){
+				hours-=12;
+			}
+
+			var minutes = "0" + leaveByTime.getMinutes();
+			var formattedTime = hours + ':' + minutes.substr(-2);
+
+			row = $('<tr/>').css('opacity',opacity);
+			row.append($('<td/>').html(''));
+			row.append($('<td/>').html(trafficPhrase + ', leave by ' + formattedTime).addClass('description'));
+		} else {
+			row = $('<tr/>').css('opacity',opacity);
+			row.append($('<td/>').html(''));
+			row.append($('<td/>').html(trafficPhrase + ', leave now').addClass('description'));
+		}
+
+		table.append(row);
+		opacity -= 1 / (eventList.length + 5);
+	}
+
+	for (var i in eventList) {
+		if(i>0) {
+			var e = eventList[i];
+			row = $('<tr/>').css('opacity', opacity);
+			if (calendar.displaySymbol) {
+				row.append($('<td/>').addClass('fa').addClass('fa-'+e.symbol).addClass('calendar-icon'));
+			}
+			row.append($('<td/>').html(e.description).addClass('description'));
+			row.append($('<td/>').html(e.days).addClass('days dimmed'));
+			table.append(row);
+			opacity -= 1 / (eventList.length + 5);
+		}
+	}
+	$(calendar.calendarLocation).updateWithText(table, this.fadeInterval);
 };
 
 calendar.fillTable = function(eventList,table){
