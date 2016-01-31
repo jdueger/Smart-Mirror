@@ -42,10 +42,15 @@ var config = {
 			'Dogs love you! Some of them. Some dogs are dumb though, so...',
 			'The Force is strong with you',
 			'I was talking to the toilet. He said you have a nice butt.',
-			'Sweet dreams!',
-			'Sleep well!',
-            'Dogs, better than people, since forever'
+			'Dogs, better than people, since forever'
         ],
+		bedtime: [
+			'Sweet dreams!',
+			'Good Night',
+			'See you tomorrow!',
+			'Sleep tight',
+			'Sleep well!'
+		],
         birthday: [
 			'<i class="fa-3x fa-birthday-cake"></i><br>Happy Birthday ',
             'Happy Birthday ',

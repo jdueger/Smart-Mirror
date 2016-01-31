@@ -40,15 +40,18 @@ compliments.updateCompliment = function () {
 	} else if (dateDay == 25 && dateMonth == 12) {
 		// Christmas compliments
 		_list = compliments.complimentList['christmas'].slice();
-	} else if (hour >= 3 && hour < 12) {
+	} else if (hour >= 3 && hour < 9) {
 		// Morning compliments
 		_list = compliments.complimentList['morning'].slice();
-	} else if (hour >= 12 && hour < 17) {
+	} else if (hour >= 9 && hour < 16) {
 		// Afternoon compliments
 		_list = compliments.complimentList['afternoon'].slice();
-	} else if (hour >= 17 || hour < 3) {
+	} else if (hour >= 16 || hour < 22) {
 		// Evening compliments
 		_list = compliments.complimentList['evening'].slice();
+	} else if (hour >= 22 || hour < 3) {
+		// Evening compliments
+		_list = compliments.complimentList['bedtime'].slice();
 	} else {
 		// Edge case in case something weird happens
 		// Just reuse evening
