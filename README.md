@@ -3,15 +3,17 @@ MagicMirror
 
 ##Introduction
 
-The basis for this project can be found on this [blog](http://michaelteeuw.nl/tagged/magicmirror), and all credit should go there.
+The basis for this project can be found on this [blog](http://michaelteeuw.nl/tagged/magicmirror).
 
 Runs as a php script on a web server with basically no external dependencies.
 
 ##Configuration
 
-Modify js/config.js to change some general variables (language, compliments, and news feed RSS)
+Modify [config.js](js/config.js) to change some general variables (language, compliments, traffic information, and news feed RSS).
 
-To use the OpenWeatherMap API, you'll need a free API key. Checkout [this blogpost](http://michaelteeuw.nl/post/131504229357/what-happened-to-the-weather) for more information.
+Modify [keys_TEMPLATE.js](js/keys_TEMPLATE.js) to add API keys, location data, and birthdays, etc, then rename the file to keys.js
+
+Required API keys and how to get them are explained in the comments in the keys file
 
 ##Code
 
@@ -39,6 +41,14 @@ Checks the git version and refreshes if a new version has been pulled. Additiona
 
 Takes the user's inserted location, language, unit type, and OpenWeatherMap API key and grabs the five day weather forecast from OpenWeatherMap. You need to set the API key in a separate file for this to work. 
 
-###[Keys](js/keys_TEMPLATE.js)
+###[Traffic](js/traffic)
 
-Stores private data, primarily API keys, but also locations and birthdays
+Displays relevant traffic data.
+
+If a regular schedule is set, traffic information, and suggestions for when you should leave to arrive on time, are displayed before work on days you are working
+
+If a regular schedule is not set, the current commute is shown perpetually
+
+###[Calendar](js/calendar)
+
+Displays the next number of events from the programmed calendars. Also displays traffic information and suggested leaving time for the first calendar event.
