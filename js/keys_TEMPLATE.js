@@ -5,7 +5,7 @@ var keys = {
         //change weather params here:
         //units: metric or imperial
         params: {
-            id: 'YOUR_CITY_ID',
+            q: 'YOUR_CITY,YOUR_COUNTRY',
             // Search for your city at http://openweathermap.org/find, and the City ID is the number at the end of the URL you're directed to
             units: 'imperial',
             // if you want a different lang for the weather that what is set above, change it here
