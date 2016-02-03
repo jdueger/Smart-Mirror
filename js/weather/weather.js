@@ -125,7 +125,7 @@ weather.updateCurrentWeather = function () {
 					
 					$(weather.feelsLikeTempLocation).updateWithText(_newFeelsLikeHtml, weather.fadeInterval);		
 
-					var _newSummaryHtml = '<p class="padding">' + data.daily.summary;
+					var _newSummaryHtml = '<p class="padding">' + data.hourly.summary;
 					
 					$(weather.weatherSummaryLocation).updateWithText(_newSummaryHtml, weather.fadeInterval);
 
