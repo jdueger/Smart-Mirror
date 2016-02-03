@@ -79,7 +79,6 @@ canvas {
 {
 	font-size: 15px;
 	letter-spacing: 0px;
-	/*font-family: "walkway_ultraboldregular";*/
 }
 .xxsmall .wi {
 	line-height: 15px;
@@ -89,7 +88,6 @@ canvas {
 {
 	font-size: 20px;
 	letter-spacing: 0px;
-	/*font-family: "walkway_ultraboldregular";*/
 }
 .xsmall .wi {
 	line-height: 20px;
@@ -100,7 +98,6 @@ canvas {
 {
 	font-size: 25px;
 	letter-spacing: 0px;
-	/*font-family: "walkway_ultraboldregular";*/
 }
 .small .wi {
 	line-height: 25px;
@@ -110,7 +107,6 @@ canvas {
 {
 	font-size: 35px;
 	letter-spacing: 0px;
-	/*font-family: "walkway_boldregular";*/
 }
 .medium .wi {
 	line-height: 35px;
@@ -190,9 +186,13 @@ canvas {
 .feelsliketemp {
 	font-size: 20px;
 	letter-spacing: 0px;
-	/*font-family: "walkway_ultraboldregular";*/
 }
 .feelsliketemp .padding {
+	padding-bottom: 15px;
+}
+
+.weathersummary {
+	width: 400px;
 	padding-bottom: 15px;
 }
 
@@ -205,9 +205,7 @@ canvas {
 	border: 0;
 	font-size: 20px;
 	line-height: 20px;
-	/*margin-top: 10px;*/
 	font-family: "walkway_boldregular";
-	/*padding-top: 5px;*/
 }
 .calendar-table .calendar-icon {
 	width: 1em;

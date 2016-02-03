@@ -2,17 +2,9 @@
 
 var keys = {
     weather: {
-        //change weather params here:
-        //units: metric or imperial
-        params: {
-            q: 'YOUR_CITY,YOUR_COUNTRY',
-            // Search for your city at http://openweathermap.org/find, and the City ID is the number at the end of the URL you're directed to
-            units: 'imperial',
-            // if you want a different lang for the weather that what is set above, change it here
-            lang: 'en',
-            APPID: 'YOUR_OPENWEATHER_API_KEY'
-            // To get your OpenWeather API key, go to http://www.openweathermap.org/news/post/get-api-key-access-weather-api/
-        }
+		apiKey: 'YOUR_API_KEY',
+		//Go to https://developer.forecast.io/ to register and get your free API key
+		address: 'YOUR_HOME_ADDRESS'
     },
 	traffic: {
 		params: {

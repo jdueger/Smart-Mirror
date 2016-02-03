@@ -1,36 +1,31 @@
 var weather = {
 	// Default language is Dutch because that is what the original author used
 	lang: config.lang || 'en',
-	params: keys.weather.params || null,
 	iconTable: {
-		'01d':'wi-day-sunny',
-		'02d':'wi-day-cloudy',
-		'03d':'wi-cloudy',
-		'04d':'wi-cloudy-windy',
-		'09d':'wi-showers',
-		'10d':'wi-rain',
-		'11d':'wi-thunderstorm',
-		'13d':'wi-snow',
-		'50d':'wi-fog',
-		'01n':'wi-night-clear',
-		'02n':'wi-night-cloudy',
-		'03n':'wi-night-cloudy',
-		'04n':'wi-night-cloudy',
-		'09n':'wi-night-showers',
-		'10n':'wi-night-rain',
-		'11n':'wi-night-thunderstorm',
-		'13n':'wi-night-snow',
-		'50n':'wi-night-alt-cloudy-windy'
+		'clear-day':'wi-day-sunny',
+		'clear-night':'wi-night-clear',
+		'cloudy':'wi-cloudy',
+		'fog':'wi-fog',
+		'hail':'wi-hail',
+		'partly-cloudy-day':'wi-day-cloudy',
+		'partly-cloudy-night':'wi-night-partly-cloudy',
+		'rain':'wi-rain',
+		'snow':'wi-snow',
+		'sleet':'wi-sleet',
+		'thunderstorm':'wi-thunderstorm',
+		'tornado':'wi-tornado',
+		'wind':'wi-windy'
 	},
 	temperatureLocation: '.temp',
+	weatherSummaryLocation: '.weathersummary',
 	feelsLikeTempLocation: '.feelsliketemp',
 	windSunLocation: '.windsun',
 	forecastLocation: '.forecast',
-	apiVersion: '2.5',
-	apiBase: 'http://api.openweathermap.org/data/',
-	weatherEndpoint: 'weather',
-	forecastEndpoint: 'forecast/daily',
-	updateInterval: 6000,
+	apiBase: 'https://api.forecast.io/forecast/',
+	apiKey: keys.weather.apiKey,
+	address: keys.weather.address,
+	snowEffectActive: 'N',
+	updateInterval: 300000,
 	fadeInterval: 1000,
 	intervalId: null
 }
@@ -42,45 +37,6 @@ var weather = {
  */
 weather.roundValue = function (temperature) {
 	return parseFloat(temperature).toFixed(1);
-}
-
-weather.calculateWindChill = function (temperature,windSpeed) {
-	return (35.74 + (0.6215 * temperature) - (35.75 * Math.pow(windSpeed,0.16)) + (0.4275 * temperature * Math.pow(windSpeed,0.16)));
-}
-
-weather.calculateHeatIndex = function (temperature,RH) {
-	return (16.923 + (1.85212 * Math.pow(10,-1) * temperature) + (5.37941 * RH)
-			- (1.00254 * Math.pow(10,-1) * temperature * RH)
-			+ (9.41695 * Math.pow(10,-3) * Math.pow(temperature,2))
-			+ (7.28898 * Math.pow(10,-3) * Math.pow(RH,2))
-			+ (3.45372 * Math.pow(10,-4) * Math.pow(temperature,2) * RH)
-			- (8.14971 * Math.pow(10,-4) * temperature * Math.pow(RH,2))
-			+ (1.02102 * Math.pow(10,-5) * Math.pow(temperature,2) * Math.pow(RH,2))
-			+ (3.8646 * Math.pow(10,-5) * Math.pow(temperature,3))
-			+ (2.91583 * Math.pow(10,-5) * Math.pow(RH,3))
-			+ (1.42721 * Math.pow(10,-6) * Math.pow(temperature,3) * RH)
-			+ (1.97483 * Math.pow(10,-7) * temperature * Math.pow(RH,3))
-			- (2.18429 * Math.pow(10,-8) * Math.pow(temperature,3) * Math.pow(RH,2))
-			+ (8.43296 * Math.pow(10,-10) * Math.pow(temperature,2) * Math.pow(RH,3))
-			- (4.81975 * Math.pow(10,-11) * Math.pow(temperature,3) * Math.pow(RH,3)));
-}
-
-/**
- * Converts the wind speed (km/h) into the values given by the Beaufort Wind Scale
- * @see http://www.spc.noaa.gov/faq/tornado/beaufort.html
- * @param  {int} kmh The wind speed in Kilometers Per Hour
- * @return {int}     The wind speed converted into its corresponding Beaufort number
- */
-weather.ms2Beaufort = function(ms) {
-	var kmh = ms * 60 * 60 / 1000;
-	var speeds = [1, 5, 11, 19, 28, 38, 49, 61, 74, 88, 102, 117, 1000];
-	for (var beaufort in speeds) {
-		var speed = speeds[beaufort];
-		if (speed > kmh) {
-			return beaufort;
-		}
-	}
-	return 12;
 }
 
 weather.windDirection = function (windAngle){
@@ -124,103 +80,102 @@ weather.windDirection = function (windAngle){
  */
 weather.updateCurrentWeather = function () {
 
-	$.ajax({
-		type: 'GET',
-		url: weather.apiBase + weather.apiVersion + '/' + weather.weatherEndpoint,
-		dataType: 'json',
-		data: weather.params,
-		success: function (data) {
+	var geocoder = new google.maps.Geocoder();
 
-			var _temperature = this.roundValue(data.main.temp),
-				_RH = this.roundValue(data.main.humidity),
-				_temperatureMin = this.roundValue(data.main.temp_min),
-				_temperatureMax = this.roundValue(data.main.temp_max),
-				_wind = this.roundValue(data.wind.speed),
-				_windDirection = this.windDirection(this.roundValue(data.wind.deg)),
-				_iconClass = this.iconTable[data.weather[0].icon],
-				_windChill = this.roundValue(this.calculateWindChill(_temperature,_wind)),
-				_heatIndex = this.roundValue(this.calculateHeatIndex(_temperature,_RH));
-				_feelsLikeDifferential = 5;
+	geocoder.geocode( { 'address': weather.address}, function(results, status) {
 
-			var _icon = '<span class="icon ' + _iconClass + ' dimmed wi"></span>';
-			
-			var _newTempHtml = _icon + '' + _temperature + '&deg;';
-			
-			$(this.temperatureLocation).updateWithText(_newTempHtml, this.fadeInterval);
-			
-			var _newFeelsLikeHtml = '';
-			
-			if(_temperature < 50 && (_temperature - _windChill) > _feelsLikeDifferential){
-				_newFeelsLikeHtml = '<p class="padding">Feels like ' + _windChill + '&deg;</span>';
-			} else if (_temperature > 80 && (_heatIndex - _temperature) > _feelsLikeDifferential){
-				_newFeelsLikeHtml = '<p class="padding">Feels like ' + _heatIndex + '&deg;</span>';
-			}
-			
-			$(this.feelsLikeTempLocation).updateWithText(_newFeelsLikeHtml, this.fadeInterval);			
+		if (status === google.maps.GeocoderStatus.OK) {
+			var latitude = results[0].geometry.location.lat();
+			var longitude = results[0].geometry.location.lng();
+			var coordinates= latitude + ',' + longitude;
 
-			var _now = moment().format('HH:mm'),
-				_sunrise = moment(data.sys.sunrise*1000).format('HH:mm') + 'AM',
-				_sunset = moment(data.sys.sunset*1000).format('HH:mm');
-				_sunset12 = moment(data.sys.sunset*1000).format('hh:mm') + 'PM';
-				
-			var _newWindHtml = '<span class="wi wi-strong-wind xdimmed"></span> ' + _windDirection + ' @ ' + _wind + 'mph', //this.ms2Beaufort(_wind),
-				_newSunHtml = '<span class="wi wi-sunrise xdimmed"></span> ' + _sunrise;
+			var forecastURL = weather.apiBase + weather.apiKey + '/' + coordinates;
 
-			if (_sunrise < _now && _sunset > _now) {
-				_newSunHtml = '<span class="wi wi-sunset xdimmed"></span> ' + _sunset12;
-			}
+			$.ajax({
+				type: 'GET',
+				url: 'controllers/weather.php?',
+				dataType: 'json',
+				data: {url: forecastURL},
+				success: function (data) {
+					
+					var _temperature = weather.roundValue(data.currently.temperature);
+						_wind = weather.roundValue(data.currently.windSpeed),
+						_windDirection = weather.windDirection(weather.roundValue(data.currently.windBearing)),
+						_iconClass = weather.iconTable[data.currently.icon],
+						_apparentTemperature = weather.roundValue(data.currently.apparentTemperature),
+						_apparentTemperatureDifferential = 5;
+						
+					if (data.currently.icon == 'snow'){
+						weather.snowEffectActive = 'Y';
+					} else{
+						weather.snowEffectActive = 'N';
+					}
+						
+					var _icon = '<span class="icon ' + _iconClass + ' dimmed wi"></span>';
+					
+					var _newTempHtml = _icon + '' + _temperature + '&deg;';
+					
+					$(weather.temperatureLocation).updateWithText(_newTempHtml, weather.fadeInterval);
+					
+					var _newFeelsLikeHtml = '';
+					
+					if(Math.abs(_temperature - _apparentTemperature) > _apparentTemperatureDifferential){
+						_newFeelsLikeHtml = '<p class="padding">Feels like ' + _windChill + '&deg;</span>';
+					}
+					
+					$(weather.feelsLikeTempLocation).updateWithText(_newFeelsLikeHtml, weather.fadeInterval);		
 
-			$(this.windSunLocation).updateWithText(_newWindHtml + ' ' + _newSunHtml, this.fadeInterval);
+					var _newSummaryHtml = '<p class="padding">' + data.daily.summary;
+					
+					$(weather.weatherSummaryLocation).updateWithText(_newSummaryHtml, weather.fadeInterval);
 
-		}.bind(this),
-		error: function () {
+					var _now = moment().format('HH:mm'),
+						_sunrise = moment(data.daily.data[0].sunriseTime*1000).format('HH:mm') + 'AM',
+						_sunset = moment(data.daily.data[0].sunsetTime*1000).format('HH:mm');
+						_sunset12 = moment(data.daily.data[0].sunsetTime*1000).format('hh:mm') + 'PM';
+						
+					var _newWindHtml = '<span class="wi wi-strong-wind xdimmed"></span> ' + _windDirection + ' @ ' + _wind + 'mph', 
+						_newSunHtml = '<span class="wi wi-sunrise xdimmed"></span> ' + _sunrise;
 
-		}
-	});
+					if (_sunrise < _now && _sunset > _now) {
+						_newSunHtml = '<span class="wi wi-sunset xdimmed"></span> ' + _sunset12;
+					}
 
-}
+					$(weather.windSunLocation).updateWithText(_newWindHtml + ' ' + _newSunHtml, weather.fadeInterval);
+					
+					
+					var _opacity = 1,
+						_forecastHtml = '';
 
-/**
- * Updates the 5 Day Forecast from the OpenWeatherMap API
- */
-weather.updateWeatherForecast = function () {
+					_forecastHtml += '<table class="forecast-table">';
 
-	$.ajax({
-		type: 'GET',
-		url: weather.apiBase + '/' + weather.apiVersion + '/' + weather.forecastEndpoint,
-		data: weather.params,
-		success: function (data) {
+					for (var i = 0, count = 5; i < count; i++) {
 
-			var _opacity = 1,
-				_forecastHtml = '';
+						var _forecast = data.daily.data[i];
 
-			_forecastHtml += '<table class="forecast-table">';
+						_forecastHtml += '<tr style="opacity:' + _opacity + '">';
 
-			for (var i = 0, count = data.list.length; i < count; i++) {
+						_forecastHtml += '<td class="day">' + moment(_forecast.time, 'X').format('ddd') + '</td>';
+						_forecastHtml += '<td class="icon-small ' + weather.iconTable[_forecast.icon] + '"></td>';
+						_forecastHtml += '<td class="temp-max">' + weather.roundValue(_forecast.temperatureMax) + '</td>';
+						_forecastHtml += '<td class="temp-min">' + weather.roundValue(_forecast.temperatureMin) + '</td>';
 
-				var _forecast = data.list[i];
+						_forecastHtml += '</tr>';
 
-				_forecastHtml += '<tr style="opacity:' + _opacity + '">';
+						_opacity -= 0.155;
 
-				_forecastHtml += '<td class="day">' + moment(_forecast.dt, 'X').format('ddd') + '</td>';
-				_forecastHtml += '<td class="icon-small ' + this.iconTable[_forecast.weather[0].icon] + '"></td>';
-				_forecastHtml += '<td class="temp-max">' + this.roundValue(_forecast.temp.max) + '</td>';
-				_forecastHtml += '<td class="temp-min">' + this.roundValue(_forecast.temp.min) + '</td>';
+					}
 
-				_forecastHtml += '</tr>';
+					_forecastHtml += '</table>';
 
-				_opacity -= 0.155;
-
-			}
-
-			_forecastHtml += '</table>';
-
-			$(this.forecastLocation).updateWithText(_forecastHtml, this.fadeInterval);
-
-		}.bind(this),
-		error: function () {
-
-		}
+					$(weather.forecastLocation).updateWithText(_forecastHtml, weather.fadeInterval);
+					
+				}.bind(this),
+				error: function () {
+				}
+			});
+	
+		} 
 	});
 
 }
@@ -236,25 +191,6 @@ window.onload = function(){
 	canvas.width = W;
 	canvas.height = H;
 
-	$.ajax({
-		type: 'GET',
-		url: weather.apiBase + '/' + weather.apiVersion + '/' + weather.weatherEndpoint,
-		dataType: 'json',
-		data: weather.params,
-		success: function (data) {
-
-			_snowEffectActive = 'N';
-
-			if(data.weather[0].icon == '13d' || data.weather[0].icon == '13n'){
-				_snowEffectActive = 'Y';
-			}
-
-		}.bind(this),
-		error: function () {
-
-		}
-	});
-	
 	//snowflake particles
 	var mp = 50; //max particles
 	var particles = [];
@@ -273,7 +209,7 @@ window.onload = function(){
 	{
 		ctx.clearRect(0, 0, W, H);
 		
-		if(_snowEffectActive == 'Y'){
+		if(weather.snowEffectActive == 'Y'){
 			ctx.fillStyle = "rgba(255, 255, 255, 0.8)";
 		} else {
 			ctx.fillStyle = "rgba(255, 255, 255, 0)";
@@ -335,19 +271,13 @@ window.onload = function(){
 	setInterval(draw, 33);
 }
 
+
 weather.init = function () {
 
-	if (this.params.lang === undefined) {
-		this.params.lang = this.lang;
-	}
-
-	if (this.params.cnt === undefined) {
-		this.params.cnt = 5;
-	}
-
+	this.updateCurrentWeather();
+	
 	this.intervalId = setInterval(function () {
 		this.updateCurrentWeather();
-		this.updateWeatherForecast();
 	}.bind(this), this.updateInterval);
 
 }
