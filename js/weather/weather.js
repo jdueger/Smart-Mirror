@@ -4,17 +4,59 @@ var weather = {
 	iconTable: {
 		'clear-day':'wi-day-sunny',
 		'clear-night':'wi-night-clear',
+			'cloudy-day':'wi-day-cloudy',
+			'cloudy-night':'wi-night-cloudy',
 		'cloudy':'wi-cloudy',
+			'fog-day':'wi-day-fog',
+			'fog-night':'wi-night-fog',
 		'fog':'wi-fog',
+			'hail-day':'wi-day-hail',
+			'hail-night':'wi-night-hail',
 		'hail':'wi-hail',
 		'partly-cloudy-day':'wi-day-cloudy',
 		'partly-cloudy-night':'wi-night-partly-cloudy',
+			'rain-day':'wi-day-rain',
+			'rain-night':'wi-night-rain',
 		'rain':'wi-rain',
+			'snow-day':'wi-day-snow',
+			'snow-night':'wi-night-snow',
 		'snow':'wi-snow',
+			'sleet-day':'wi-day-sleet',
+			'sleet-night':'wi-night-sleet',
 		'sleet':'wi-sleet',
 		'thunderstorm':'wi-thunderstorm',
 		'tornado':'wi-tornado',
 		'wind':'wi-windy'
+	},
+	moonIconTable: {
+		'0':'wi-moon-new',
+		'1':'wi-moon-waxing-crescent-1',
+		'2':'wi-moon-waxing-crescent-2',
+		'3':'wi-moon-waxing-crescent-3',
+		'4':'wi-moon-waxing-crescent-4',
+		'5':'wi-moon-waxing-crescent-5',
+		'6':'wi-moon-waxing-crescent-6',
+		'7':'wi-moon-first-quarter',
+		'8':'wi-moon-waxing-gibbous-1',
+		'9':'wi-moon-waxing-gibbous-2',
+		'10':'wi-moon-waxing-gibbous-3',
+		'11':'wi-moon-waxing-gibbous-4',
+		'12':'wi-moon-waxing-gibbous-5',
+		'13':'wi-moon-waxing-gibbous-6',
+		'14':'wi-moon-full',
+		'15':'wi-moon-waning-gibbous-1',
+		'16':'wi-moon-waning-gibbous-2',
+		'17':'wi-moon-waning-gibbous-3',
+		'18':'wi-moon-waning-gibbous-4',
+		'19':'wi-moon-waning-gibbous-5',
+		'20':'wi-moon-waning-gibbous-6',
+		'21':'wi-moon-third-quarter',
+		'22':'wi-moon-waning-crescent-1',
+		'23':'wi-moon-waning-crescent-2',
+		'24':'wi-moon-waning-crescent-3',
+		'25':'wi-moon-waning-crescent-4',
+		'26':'wi-moon-waning-crescent-5',
+		'27':'wi-moon-waning-crescent-6'
 	},
 	temperatureLocation: '.temp',
 	weatherSummaryLocation: '.weathersummary',
@@ -37,6 +79,21 @@ var weather = {
  */
 weather.roundValue = function (temperature) {
 	return parseFloat(temperature).toFixed(1);
+}
+
+weather.mainIcon = function (icon,moonPhase,isDaytime){
+
+	if(icon=='clear-day' || icon=='partly-cloudy-day' || icon == 'partly-cloudy-night' || icon == 'thunderstorm' || icon == 'tornado' || icon == 'wind'){
+		return weather.iconTable[icon];
+	}else if(icon == 'clear-night'){
+		return weather.moonIconTable[moonPhase];
+	}else{
+		if(isDaytime){
+			return weather.iconTable[icon + '-day'];
+		} else{
+			return weather.iconTable[icon + '-night'];
+		}
+	}
 }
 
 weather.windDirection = function (windAngle){
@@ -101,22 +158,17 @@ weather.updateCurrentWeather = function () {
 					var _temperature = weather.roundValue(data.currently.temperature);
 						_wind = weather.roundValue(data.currently.windSpeed),
 						_windDirection = weather.windDirection(weather.roundValue(data.currently.windBearing)),
-						_iconClass = weather.iconTable[data.currently.icon],
+						_moonPhase = Math.round(27*data.daily.data[0].moonPhase);
+						_icon = data.currently.icon,
 						_apparentTemperature = weather.roundValue(data.currently.apparentTemperature),
 						_apparentTemperatureDifferential = 5;
-						
+
 					if (data.currently.icon == 'snow'){
 						weather.snowEffectActive = 'Y';
 					} else{
 						weather.snowEffectActive = 'N';
 					}
 						
-					var _icon = '<span class="icon ' + _iconClass + ' dimmed wi"></span>';
-					
-					var _newTempHtml = _icon + '' + _temperature + '&deg;';
-					
-					$(weather.temperatureLocation).updateWithText(_newTempHtml, weather.fadeInterval);
-					
 					var _newFeelsLikeHtml = '';
 					
 					if(Math.abs(_temperature - _apparentTemperature) > _apparentTemperatureDifferential){
@@ -136,12 +188,23 @@ weather.updateCurrentWeather = function () {
 						
 					var _newWindHtml = '<span class="wi wi-strong-wind xdimmed"></span> ' + _windDirection + ' @ ' + _wind + 'mph', 
 						_newSunHtml = '<span class="wi wi-sunrise xdimmed"></span> ' + _sunrise;
+						_isDaytime = false;
 
 					if (_sunrise < _now && _sunset > _now) {
 						_newSunHtml = '<span class="wi wi-sunset xdimmed"></span> ' + _sunset12;
+						_isDaytime = true;
 					}
 
 					$(weather.windSunLocation).updateWithText(_newWindHtml + ' ' + _newSunHtml, weather.fadeInterval);
+
+
+					var _mainIcon = weather.mainIcon(_icon,_moonPhase,_isDaytime);
+
+					var _icon = '<span class="icon ' + _mainIcon + ' dimmed wi"></span>';
+
+					var _newTempHtml = _icon + '' + _temperature + '&deg;';
+
+					$(weather.temperatureLocation).updateWithText(_newTempHtml, weather.fadeInterval);
 					
 					
 					var _opacity = 1,
@@ -162,7 +225,7 @@ weather.updateCurrentWeather = function () {
 
 						_forecastHtml += '</tr>';
 
-						_opacity -= 0.155;
+						_opacity -= 0.175;
 
 					}
 
