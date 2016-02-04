@@ -149,7 +149,7 @@ weather.updateCurrentWeather = function () {
 
 					_forecastHtml += '<table class="forecast-table">';
 
-					for (var i = 0, count = 5; i < count; i++) {
+					for (var i = 0, count = data.daily.data.length; i < count; i++) {
 
 						var _forecast = data.daily.data[i];
 
