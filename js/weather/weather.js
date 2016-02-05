@@ -172,7 +172,7 @@ weather.updateCurrentWeather = function () {
 					var _newFeelsLikeHtml = '';
 					
 					if(Math.abs(_temperature - _apparentTemperature) > _apparentTemperatureDifferential){
-						_newFeelsLikeHtml = '<p class="padding">Feels like ' + _windChill + '&deg;</span>';
+						_newFeelsLikeHtml = '<p class="padding">Feels like ' + _apparentTemperature + '&deg;</span>';
 					}
 					
 					$(weather.feelsLikeTempLocation).updateWithText(_newFeelsLikeHtml, weather.fadeInterval);		
