@@ -200,7 +200,7 @@ calendar.traffic = function(data,eventList,table){
 	row.append($('<td/>').html(eventList[0].description).addClass('description'));
 	row.append($('<td/>').html(eventList[0].days).addClass('days dimmed'));
 	table.append(row);
-	opacity -= 0.175;
+	opacity -= 0.125;
 
 	var travelTime = data.routes[0].legs[0].duration_in_traffic.value,
 			duration = data.routes[0].legs[0].duration.value,
@@ -231,7 +231,7 @@ calendar.traffic = function(data,eventList,table){
 		}
 
 		table.append(row);
-		opacity -= 0.175;
+		opacity -= 0.125;
 	}
 
 	for (var i in eventList) {
@@ -244,7 +244,7 @@ calendar.traffic = function(data,eventList,table){
 			row.append($('<td/>').html(e.description).addClass('description'));
 			row.append($('<td/>').html(e.days).addClass('days dimmed'));
 			table.append(row);
-			opacity -= 0.175;
+			opacity -= 0.125;
 		}
 	}
 	$(calendar.calendarLocation).updateWithText(table, this.fadeInterval);
@@ -263,7 +263,7 @@ calendar.fillTable = function(eventList,table){
 		row.append($('<td/>').html(e.description).addClass('description'));
 		row.append($('<td/>').html(e.days).addClass('days dimmed'));
 		table.append(row);
-		opacity -= 0.175;
+		opacity -= 0.125;
 	}
 	$(calendar.calendarLocation).updateWithText(table, this.fadeInterval);
 };

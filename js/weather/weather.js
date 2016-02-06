@@ -225,7 +225,7 @@ weather.updateCurrentWeather = function () {
 
 						_forecastHtml += '</tr>';
 
-						_opacity -= 0.175;
+						_opacity -= 0.125;
 
 					}
 
