@@ -243,6 +243,7 @@ weather.updateCurrentWeather = function () {
 
 }
 
+/*
 window.onload = function(){
 	//canvas init
 	var canvas = document.getElementById("canvas");
@@ -333,6 +334,7 @@ window.onload = function(){
 	//animation loop
 	setInterval(draw, 33);
 }
+*/
 
 
 weather.init = function () {
