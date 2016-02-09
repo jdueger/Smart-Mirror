@@ -67,7 +67,7 @@ var weather = {
 	apiKey: keys.weather.apiKey,
 	address: keys.weather.address,
 	snowEffectActive: 'N',
-	updateInterval: 300000,
+	updateInterval: 300000,	//forecast.io limits free accounts to 1000 API calls per day. To stay under this limit, keep the updateInterval to 90000 or greater
 	fadeInterval: 1000,
 	intervalId: null
 }
