@@ -11,6 +11,7 @@
 	</script>
 	<meta name="google" value="notranslate" />
 	<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+	<meta http-equiv="refresh" content="86400">
 </head>
 <body>
 	<!--<canvas id="canvas"></canvas>   <!--//Temporarily removed until the Pi graphics driver improves-->
