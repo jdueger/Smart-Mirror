@@ -201,7 +201,7 @@ calendar.traffic = function(data,eventList,table){
 	}
 
 	if(eventList[0].description.length>this.eventTitleMaxLength){
-		eventDescription = eventList[0].description.substring(0,this.eventTitleMaxLength-1);
+		eventDescription = eventList[0].description.substring(0,this.eventTitleMaxLength);
 	} else{
 		eventDescription = eventList[0].description;
 	}
@@ -252,7 +252,7 @@ calendar.traffic = function(data,eventList,table){
 			}
 
 			if(e.description.length>this.eventTitleMaxLength){
-				eventDescription = e.description.substring(0,this.eventTitleMaxLength-1);
+				eventDescription = e.description.substring(0,this.eventTitleMaxLength);
 			} else{
 				eventDescription = e.description;
 			}
@@ -279,7 +279,7 @@ calendar.fillTable = function(eventList,table){
 		}
 
 		if(e.description.length>this.eventTitleMaxLength){
-			eventDescription = e.description.substring(0,this.eventTitleMaxLength-1);
+			eventDescription = e.description.substring(0,this.eventTitleMaxLength);
 		} else{
 			eventDescription = e.description;
 		}
