@@ -18,7 +18,8 @@ var calendar = {
 		key: keys.traffic.params.key
 	},
 	traffic: config.calendar.traffic,
-	travelBuffer: 300
+	travelBuffer: 300,
+	eventTitleMaxLength: 28
 };
 
 calendar.processEvents = function (url, events) {
@@ -192,12 +193,20 @@ calendar.updateCalendar = function (eventList) {
 
 calendar.traffic = function(data,eventList,table){
 	var opacity = 1;
+	var eventDescription = '';
 
 	var row = $('<tr/>').css('opacity', opacity);
 	if (calendar.displaySymbol) {
 		row.append($('<td/>').addClass('fa').addClass('fa-'+eventList[0].symbol).addClass('calendar-icon'));
 	}
-	row.append($('<td/>').html(eventList[0].description).addClass('description'));
+
+	if(eventList[0].description.length>this.eventTitleMaxLength){
+		eventDescription = eventList[0].description.substring(0,this.eventTitleMaxLength-1);
+	} else{
+		eventDescription = eventList[0].description;
+	}
+
+	row.append($('<td/>').html(eventDescription).addClass('description'));
 	row.append($('<td/>').html(eventList[0].days).addClass('days dimmed'));
 	table.append(row);
 	opacity -= 0.125;
@@ -241,7 +250,14 @@ calendar.traffic = function(data,eventList,table){
 			if (calendar.displaySymbol) {
 				row.append($('<td/>').addClass('fa').addClass('fa-'+e.symbol).addClass('calendar-icon'));
 			}
-			row.append($('<td/>').html(e.description).addClass('description'));
+
+			if(e.description.length>this.eventTitleMaxLength){
+				eventDescription = e.description.substring(0,this.eventTitleMaxLength-1);
+			} else{
+				eventDescription = e.description;
+			}
+
+			row.append($('<td/>').html(eventDescription).addClass('description'));
 			row.append($('<td/>').html(e.days).addClass('days dimmed'));
 			table.append(row);
 			opacity -= 0.125;
@@ -252,6 +268,7 @@ calendar.traffic = function(data,eventList,table){
 
 calendar.fillTable = function(eventList,table){
 	var opacity = 1;
+	var eventDescription = '';
 
 	for (var i in eventList) {
 		var e = eventList[i];
@@ -260,7 +277,14 @@ calendar.fillTable = function(eventList,table){
 		if (calendar.displaySymbol) {
 			row.append($('<td/>').addClass('fa').addClass('fa-'+e.symbol).addClass('calendar-icon'));
 		}
-		row.append($('<td/>').html(e.description).addClass('description'));
+
+		if(e.description.length>this.eventTitleMaxLength){
+			eventDescription = e.description.substring(0,this.eventTitleMaxLength-1);
+		} else{
+			eventDescription = e.description;
+		}
+
+		row.append($('<td/>').html(eventDescription).addClass('description'));
 		row.append($('<td/>').html(e.days).addClass('days dimmed'));
 		table.append(row);
 		opacity -= 0.125;
