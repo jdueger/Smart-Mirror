@@ -15,6 +15,8 @@ Modify [keys_TEMPLATE.js](js/keys_TEMPLATE.js) to add API keys, location data, a
 
 Required API keys and how to get them are explained in the comments in the keys file
 
+Important: You must have cURL support for PHP installed. This simply won't work otherwise
+
 ##Code
 
 ###[main.js](js/main.js)
