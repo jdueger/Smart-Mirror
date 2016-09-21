@@ -63,7 +63,7 @@ var weather = {
 	feelsLikeTempLocation: '.feelsliketemp',
 	windSunLocation: '.windsun',
 	forecastLocation: '.forecast',
-	apiBase: 'https://api.forecast.io/forecast/',
+	apiBase: 'https://api.darksky.net/forecast/',
 	apiKey: keys.weather.apiKey,
 	address: keys.weather.address,
 	snowEffectActive: 'N',
