@@ -47,4 +47,5 @@ jQuery(document).ready(function($) {
 	
 	news.init();
 	
+	MyQ.init();
 });

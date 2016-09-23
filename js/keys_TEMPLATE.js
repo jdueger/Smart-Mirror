@@ -16,6 +16,14 @@ var keys = {
             // Go here to get your Google Maps API key: https://developers.google.com/maps/documentation/directions/
 		}
 	},
+	MyQ: {
+		params: {
+			username: 'username',
+			password: 'password',
+			culture: 'en',
+			appId: 'Vj8pQggXLhLy0WHahglCD4N1nAkkXQtGYpq2HrHD7H1nvmbT55KqtN6RSF4ILB%2fi'
+		}
+	},
 	calendar: {
 		maximumEntries: 10, // Total Maximum Entries
 		displaySymbol: true,

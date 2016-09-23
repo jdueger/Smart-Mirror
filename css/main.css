@@ -201,6 +201,18 @@ canvas {
 	padding-left: 1px;
 }
 
+.MyQ {
+	padding-bottom: 15px;
+	padding-left: 1px;
+}
+
+.MyQ .myq-icon {
+	width: 1em;
+	min-width: 1em;
+	margin-right: 6px;
+	text-align: center;
+}
+
 .calendar-table {
 	border: 0;
 	font-size: 20px;
@@ -210,7 +222,7 @@ canvas {
 .calendar-table .calendar-icon {
 	width: 1em;
 	min-width: 1em;
-	margin-right: 5px;
+	margin-right: 0px;
 	text-align: center;
 }
 .calendar-table .description {
