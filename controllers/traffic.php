@@ -46,6 +46,7 @@ if (isset($departure_time)){
 
 $url = 'https://maps.googleapis.com/maps/api/directions/json?' . http_build_query($fields);
 
+/*
 // Open connection
 $ch = curl_init();
 
@@ -62,6 +63,10 @@ $result = curl_exec($ch);
 
 // Close connection
 curl_close($ch);
+*/
+
+
+$result = file_get_contents($url);
 
 // get the result and parse to JSON
 $result_arr = json_decode($result, true);
