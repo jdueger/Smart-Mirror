@@ -1,7 +1,8 @@
 var MyQ = {
 	MyQLocation: '.MyQ',
 	params: keys.MyQ.params || null,
-	updateInterval: 300000,
+	loginInterval: 3510000,	//logging in creates a security token, which expires every hour
+	updateInterval: 90000,	//updating every 90 seconds, to have less than 1000 API calls per day
 	fadeInterval: 1000,
 	intervalId: null
 };
@@ -9,7 +10,7 @@ var MyQ = {
 /**
  * Retrieves the garage door states from the Chamberlain MyQ API
  */
-MyQ.updateCurrentState = function () {
+MyQ.login = function () {
 
 	$.ajax({
 		type: 'GET',
@@ -17,37 +18,13 @@ MyQ.updateCurrentState = function () {
 		dataType: 'json',
 		data: MyQ.params,
 		success: function (data) {
-			var _securityToken = data.SecurityToken;
+			var detailsParams = {securityToken:data.SecurityToken,appId:MyQ.params.appId};
 
-			var detailsParams = {securityToken:_securityToken,appId:MyQ.params.appId};
+			this.updateCurrentState(detailsParams);
 
-			$.ajax({
-				type: 'GET',
-				url: 'controllers/MyQ/MyQ_Details.php?',
-				dataType: 'json',
-				data: detailsParams,
-				success: function (data) {
-					
-					var table = $('<table/>').addClass('xsmall').addClass('calendar-table');
-					var opacity = 0.75;
-					var row = $('<tr/>').css('opacity', opacity);
-										
-					row.append($('<td/>').addClass('fa-down').addClass(MyQ.getSymbol(data.Devices[3].Attributes[3].Value)).addClass('myq-icon'));
-					row.append($('<td/>').html(data.Devices[3].Attributes[2].Value).addClass('description'));
-					row.append($('<td/>').html(MyQ.getPhrase(data.Devices[3].Attributes[3].Value)).addClass('description'));
-					table.append(row);
-					row = $('<tr/>').css('opacity',opacity);
-					row.append($('<td/>').addClass('fa-down').addClass(MyQ.getSymbol(data.Devices[2].Attributes[3].Value)).addClass('myq-icon'));
-					row.append($('<td/>').html(data.Devices[2].Attributes[2].Value).addClass('description'));
-					row.append($('<td/>').html(MyQ.getPhrase(data.Devices[2].Attributes[3].Value)).addClass('description'));
-					table.append(row);
-					
-					$(this.MyQLocation).updateWithText(table, this.fadeInterval);
-					
-				}.bind(this),
-				error: function () {
-				}
-			});
+			this.intervalId = setInterval(function () {
+				this.updateCurrentState(detailsParams);
+			}.bind(this), this.updateInterval);
 
 		}.bind(this),
 		error: function () {
@@ -55,6 +32,38 @@ MyQ.updateCurrentState = function () {
 	});	
 	
 };
+
+MyQ.updateCurrentState = function(detailsParams){
+	
+	$.ajax({
+		type: 'GET',
+		url: 'controllers/MyQ/MyQ_Details.php?',
+		dataType: 'json',
+		data: detailsParams,
+		success: function (data) {
+			
+			var table = $('<table/>').addClass('xsmall').addClass('calendar-table');
+			var opacity = 0.75;
+			var row = $('<tr/>').css('opacity', opacity);
+								
+			row.append($('<td/>').addClass('fa-down').addClass(MyQ.getSymbol(data.Devices[3].Attributes[3].Value)).addClass('myq-icon'));
+			row.append($('<td/>').html(data.Devices[3].Attributes[2].Value).addClass('description'));
+			row.append($('<td/>').html(MyQ.getPhrase(data.Devices[3].Attributes[3].Value)).addClass('description'));
+			table.append(row);
+			row = $('<tr/>').css('opacity',opacity);
+			row.append($('<td/>').addClass('fa-down').addClass(MyQ.getSymbol(data.Devices[2].Attributes[3].Value)).addClass('myq-icon'));
+			row.append($('<td/>').html(data.Devices[2].Attributes[2].Value).addClass('description'));
+			row.append($('<td/>').html(MyQ.getPhrase(data.Devices[2].Attributes[3].Value)).addClass('description'));
+			table.append(row);
+			
+			$(this.MyQLocation).updateWithText(table, this.fadeInterval);
+			
+		}.bind(this),
+		error: function () {
+		}
+	});
+	
+}
 
 MyQ.getPhrase = function(_doorState){
 
@@ -92,10 +101,10 @@ MyQ.getSymbol = function(_doorState){
 
 MyQ.init = function () {
 
-	this.updateCurrentState();
+	this.login();
 
 	this.intervalId = setInterval(function () {
-		this.updateCurrentState();
-	}.bind(this), this.updateInterval);
+		this.login();
+	}.bind(this), this.loginInterval);
 
 };
