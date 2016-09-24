@@ -54,3 +54,7 @@ If a regular schedule is not set, the current commute is shown perpetually
 ###[Calendar](js/calendar)
 
 Displays the next number of events from the programmed calendars. Also displays traffic information and suggested leaving time for the first calendar event.
+
+###[Chamberlain MyQ Garage Door Status](js/MyQ)
+
+Displays the names and current positions of the garage doors on your Chamberlain MyQ account. It's currently set up for 2 garage doors, with each having it's own built in MyQ gateway. For more or less doors or gateways, some minor changes would be required.
